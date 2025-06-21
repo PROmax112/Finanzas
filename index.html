@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Gastos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --success-color: #4cc9f0;
+            --danger-color: #f72585;
+            --warning-color: #f8961e;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --gray-color: #6c757d;
+            --white: #ffffff;
+            --necessary-color: #38b000;
+            --prescindible-color: #ffaa00;
+            --superfluo-color: #ef233c;
+            --income-color: #00b4d8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 20px 0;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background-color: var(--white);
+            color: var(--primary-color);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--white);
+            border: 1px solid var(--white);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            background-color: var(--white);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .date-display {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        input[type="date"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="password"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Roboto', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="password"]:focus,
+        input[type="email"]:focus,
+        select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            margin: 0;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .radio-label.necessary {
+            color: var(--necessary-color);
+        }
+
+        .radio-label.prescindible {
+            color: var(--prescindible-color);
+        }
+
+        .radio-label.superfluo {
+            color: var(--superfluo-color);
+        }
+
+        .radio-label.income {
+            color: var(--income-color);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            transition: background-color 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: var(--gray-color);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: #d91a63;
+        }
+
+        .transactions-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .transaction-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-description {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .transaction-category {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background-color: #eee;
+            display: inline-block;
+        }
+
+        .transaction-category.necessary {
+            background-color: rgba(56, 176, 0, 0.1);
+            color: var(--necessary-color);
+        }
+
+        .transaction-category.prescindible {
+            background-color: rgba(248, 150, 30, 0.1);
+            color: var(--prescindible-color);
+        }
+
+        .transaction-category.superfluo {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--superfluo-color);
+        }
+
+        .transaction-category.income {
+            background-color: rgba(0, 180, 216, 0.1);
+            color: var(--income-color);
+        }
+
+        .transaction-amount {
+            font-weight: 700;
+            margin-left: 15px;
+        }
+
+        .transaction-amount.expense {
+            color: var(--danger-color);
+        }
+
+        .transaction-amount.income {
+            color: var(--income-color);
+        }
+
+        .transaction-date {
+            font-size: 0.8rem;
+            color: var(--gray-color);
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--gray-color);
+            cursor: pointer;
+            margin-left: 10px;
+            transition: color 0.3s;
+        }
+
+        .delete-btn:hover {
+            color: var(--danger-color);
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-card h3 {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            margin-bottom: 10px;
+        }
+
+        .summary-card .amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .summary-card .balance {
+            color: var(--primary-color);
+        }
+
+        .summary-card .income {
+            color: var(--income-color);
+        }
+
+        .summary-card .expense {
+            color: var(--danger-color);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success-color);
+            color: var(--white);
+            padding: 12px 20px;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.error {
+            background-color: var(--danger-color);
+        }
+
+        .auth-container {
+            max-width: 500px;
+            margin: 50px auto;
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .auth-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .auth-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .auth-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .auth-link:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Vista de Autenticación -->
+    <div id="auth-view">
+        <header>
+            <div class="container header-content">
+                <h1><i class="material-icons">account_balance_wallet</i> Control de Gastos</h1>
+            </div>
+        </header>
+
+        <div class="container">
+            <div id="login-container" class="auth-container">
+                <h2 class="auth-title">Iniciar Sesión</h2>
+                <form id="login-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Contraseña</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">
+                        <i class="material-icons">login</i> Iniciar Sesión
+                    </button>
+                </form>
+                <div class="auth-footer">
+                    <p>¿No tienes una cuenta? <a href="#" class="auth-link" id="show-register">Regístrate</a></p>
+                </div>
+            </div>
+
+            <div id="register-container" class="auth-container hidden">
+                <h2 class="auth-title">Crear Cuenta</h2>
+                <form id="register-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="register-name">Nombre</label>
+                        <input type="text" id="register-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Contraseña</label>
+                        <input type="password" id="register-password" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm-password">Confirmar Contraseña</label>
+                        <input type="password" id="register-confirm-password" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">
+                        <i class="material-icons">person_add</i> Registrarse
+                    </button>
+                </form>
+                <div class="auth-footer">
+                    <p>¿Ya tienes una cuenta? <a href="#" class="auth-link" id="show-login">Inicia Sesión</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vista Principal -->
+    <div id="app-view" class="hidden">
+        <header>
+            <div class="container header-content">
+                <h1><i class="material-icons">account_balance_wallet</i> Control de Gastos</h1>
+                <div class="auth-buttons">
+                    <button id="logout-btn" class="btn btn-outline">
+                        <i class="material-icons">logout</i> Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="date-selector">
+                <div class="date-display">
+                    <i class="material-icons">calendar_today</i>
+                    <span id="current-date">Hoy, 1 de enero de 2023</span>
+                </div>
+                <input type="date" id="date-picker">
+            </div>
+
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>Saldo Actual</h3>
+                    <div class="amount balance" id="current-balance">$0.00</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Ingresos</h3>
+                    <div class="amount income" id="total-income">$0.00</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Gastos</h3>
+                    <div class="amount expense" id="total-expense">$0.00</div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="left-column">
+                    <div class="card">
+                        <h2 class="card-title"><i class="material-icons">add_circle</i> Nuevo Registro</h2>
+                        <form id="transaction-form">
+                            <div class="form-group">
+                                <label for="description">Descripción</label>
+                                <input type="text" id="description" placeholder="Ej. Comida, Salario, etc." required>
+                            </div>
+                            <div class="form-group">
+                                <label for="amount">Monto</label>
+                                <input type="number" id="amount" min="0" step="0.01" placeholder="0.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo</label>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="type" value="income" id="type-income">
+                                        <span class="radio-label income"><i class="material-icons">arrow_upward</i> Ingreso</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="type" value="necessary" id="type-necessary" checked>
+                                        <span class="radio-label necessary"><i class="material-icons">check_circle</i> Necesario</span>
+                                    </label>
+                                </div>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="type" value="prescindible" id="type-prescindible">
+                                        <span class="radio-label prescindible"><i class="material-icons">watch_later</i> Prescindible</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="type" value="superfluo" id="type-superfluo">
+                                        <span class="radio-label superfluo"><i class="material-icons">cancel</i> Superfluo</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary"><i class="material-icons">save</i> Agregar</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="card-title"><i class="material-icons">list_alt</i> Transacciones Recientes</h2>
+                        <div class="transactions-list" id="transactions-list">
+                            <!-- Las transacciones se agregarán aquí dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-column">
+                    <div class="card">
+                        <h2 class="card-title"><i class="material-icons">pie_chart</i> Resumen de Gastos</h2>
+                        <div class="chart-container">
+                            <canvas id="expenses-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="card-title"><i class="material-icons">show_chart</i> Historial Diario</h2>
+                        <div class="chart-container">
+                            <canvas id="daily-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="export-buttons">
+                        <button class="btn btn-secondary" id="export-json"><i class="material-icons">code</i> Exportar JSON</button>
+                        <button class="btn btn-secondary" id="export-csv"><i class="material-icons">description</i> Exportar CSV</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <i class="material-icons">check_circle</i>
+        <span id="toast-message">Transacción guardada</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Variables globales
+            let currentUser = null;
+            let transactions = [];
+            let currentDate = new Date();
+            let expensesChart = null;
+            let dailyChart = null;
+
+            // Elementos del DOM
+            const authView = document.getElementById('auth-view');
+            const appView = document.getElementById('app-view');
+            const loginContainer = document.getElementById('login-container');
+            const registerContainer = document.getElementById('register-container');
+            const showRegister = document.getElementById('show-register');
+            const showLogin = document.getElementById('show-login');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const logoutBtn = document.getElementById('logout-btn');
+            const datePicker = document.getElementById('date-picker');
+            const currentDateElement = document.getElementById('current-date');
+            const transactionForm = document.getElementById('transaction-form');
+            const transactionsList = document.getElementById('transactions-list');
+            const currentBalanceElement = document.getElementById('current-balance');
+            const totalIncomeElement = document.getElementById('total-income');
+            const totalExpenseElement = document.getElementById('total-expense');
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            const exportJsonBtn = document.getElementById('export-json');
+            const exportCsvBtn = document.getElementById('export-csv');
+
+            // Inicialización
+            checkAuthStatus();
+            initDatePicker();
+
+            // Event Listeners
+            showRegister.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginContainer.classList.add('hidden');
+                registerContainer.classList.remove('hidden');
+            });
+
+            showLogin.addEventListener('click', function(e) {
+                e.preventDefault();
+                registerContainer.classList.add('hidden');
+                loginContainer.classList.remove('hidden');
+            });
+
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                loginUser();
+            });
+
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                registerUser();
+            });
+
+            logoutBtn.addEventListener('click', logoutUser);
+
+            datePicker.addEventListener('change', function() {
+                currentDate = new Date(this.value);
+                updateDateDisplay();
+                renderTransactions();
+                renderCharts();
+            });
+
+            transactionForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                addTransaction();
+            });
+
+            exportJsonBtn.addEventListener('click', exportToJson);
+            exportCsvBtn.addEventListener('click', exportToCsv);
+
+            // Funciones de autenticación
+            function checkAuthStatus() {
+                const user = localStorage.getItem('currentUser');
+                if (user) {
+                    currentUser = JSON.parse(user);
+                    authView.classList.add('hidden');
+                    appView.classList.remove('hidden');
+                    loadUserData();
+                } else {
+                    authView.classList.remove('hidden');
+                    appView.classList.add('hidden');
+                }
+            }
+
+            function loginUser() {
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+
+                // Simulación de autenticación (en un caso real sería una llamada a una API)
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const user = users.find(u => u.email === email && u.password === password);
+
+                if (user) {
+                    currentUser = {
+                        id: user.id,
+                        name: user.name,
+                        email: user.email
+                    };
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    showToast('Inicio de sesión exitoso');
+                    checkAuthStatus();
+                } else {
+                    showToast('Credenciales incorrectas', 'error');
+                }
+            }
+
+            function registerUser() {
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('register-confirm-password').value;
+
+                if (password !== confirmPassword) {
+                    showToast('Las contraseñas no coinciden', 'error');
+                    return;
+                }
+
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                
+                if (users.some(u => u.email === email)) {
+                    showToast('El email ya está registrado', 'error');
+                    return;
+                }
+
+                const newUser = {
+                    id: Date.now(),
+                    name,
+                    email,
+                    password // En un caso real, la contraseña debería estar hasheada
+                };
+
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+                showToast('Registro exitoso. Por favor inicia sesión.');
+
+                // Mostrar formulario de login
+                registerContainer.classList.add('hidden');
+                loginContainer.classList.remove('hidden');
+                loginForm.reset();
+            }
+
+            function logoutUser() {
+                localStorage.removeItem('currentUser');
+                currentUser = null;
+                showToast('Sesión cerrada');
+                checkAuthStatus();
+            }
+
+            // Funciones de la aplicación
+            function loadUserData() {
+                transactions = JSON.parse(localStorage.getItem(`transactions_${currentUser.id}`)) || [];
+                updateDateDisplay();
+                renderTransactions();
+                updateSummary();
+                renderCharts();
+            }
+
+            function initDatePicker() {
+                const today = new Date();
+                datePicker.valueAsDate = today;
+            }
+
+            function updateDateDisplay() {
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                currentDateElement.textContent = currentDate.toLocaleDateString('es-ES', options);
+            }
+
+            function addTransaction() {
+                const description = document.getElementById('description').value;
+                const amount = parseFloat(document.getElementById('amount').value);
+                const type = document.querySelector('input[name="type"]:checked').value;
+
+                if (!description || isNaN(amount)) {
+                    showToast('Por favor completa todos los campos', 'error');
+                    return;
+                }
+
+                const transaction = {
+                    id: Date.now(),
+                    userId: currentUser.id,
+                    date: currentDate.toISOString().split('T')[0],
+                    description,
+                    amount,
+                    type
+                };
+
+                transactions.push(transaction);
+                saveTransactions();
+                renderTransactions();
+                updateSummary();
+                renderCharts();
+                showToast('Transacción agregada correctamente');
+
+                // Reset form
+                transactionForm.reset();
+                document.getElementById('type-necessary').checked = true;
+            }
+
+            function deleteTransaction(id) {
+                transactions = transactions.filter(transaction => transaction.id !== id);
+                saveTransactions();
+                renderTransactions();
+                updateSummary();
+                renderCharts();
+                showToast('Transacción eliminada');
+            }
+
+            function saveTransactions() {
+                localStorage.setItem(`transactions_${currentUser.id}`, JSON.stringify(transactions));
+            }
+
+            function renderTransactions() {
+                const currentDateStr = currentDate.toISOString().split('T')[0];
+                const filteredTransactions = transactions.filter(
+                    transaction => transaction.date === currentDateStr && transaction.userId === currentUser.id
+                ).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                transactionsList.innerHTML = '';
+
+                if (filteredTransactions.length === 0) {
+                    transactionsList.innerHTML = '<p style="text-align: center; color: var(--gray-color); padding: 20px;">No hay transacciones para esta fecha</p>';
+                    return;
+                }
+
+                filteredTransactions.forEach(transaction => {
+                    const transactionElement = document.createElement('div');
+                    transactionElement.className = 'transaction-item';
+
+                    const categoryClass = transaction.type === 'income' ? 'income' : 
+                                        transaction.type === 'necessary' ? 'necessary' :
+                                        transaction.type === 'prescindible' ? 'prescindible' : 'superfluo';
+
+                    const categoryText = transaction.type === 'income' ? 'Ingreso' : 
+                                        transaction.type === 'necessary' ? 'Necesario' :
+                                        transaction.type === 'prescindible' ? 'Prescindible' : 'Superfluo';
+
+                    const amountClass = transaction.type === 'income' ? 'income' : 'expense';
+                    const amountPrefix = transaction.type === 'income' ? '+' : '-';
+
+                    transactionElement.innerHTML = `
+                        <div class="transaction-info">
+                            <div class="transaction-description">${transaction.description}</div>
+                            <span class="transaction-category ${categoryClass}">${categoryText}</span>
+                        </div>
+                        <div class="transaction-amount ${amountClass}">${amountPrefix}$${transaction.amount.toFixed(2)}</div>
+                        <button class="delete-btn" onclick="deleteTransaction(${transaction.id})">
+                            <i class="material-icons">delete</i>
+                        </button>
+                    `;
+
+                    transactionsList.appendChild(transactionElement);
+                });
+            }
+
+            function updateSummary() {
+                const currentDateStr = currentDate.toISOString().split('T')[0];
+                const filteredTransactions = transactions.filter(
+                    transaction => transaction.date === currentDateStr && transaction.userId === currentUser.id
+                );
+
+                let totalIncome = 0;
+                let totalExpense = 0;
+
+                filteredTransactions.forEach(transaction => {
+                    if (transaction.type === 'income') {
+                        totalIncome += transaction.amount;
+                    } else {
+                        totalExpense += transaction.amount;
+                    }
+                });
+
+                const balance = totalIncome - totalExpense;
+
+                currentBalanceElement.textContent = `$${balance.toFixed(2)}`;
+                totalIncomeElement.textContent = `$${totalIncome.toFixed(2)}`;
+                totalExpenseElement.textContent = `$${totalExpense.toFixed(2)}`;
+            }
+
+            function renderCharts() {
+                renderExpensesChart();
+                renderDailyChart();
+            }
+
+            function renderExpensesChart() {
+                const currentDateStr = currentDate.toISOString().split('T')[0];
+                const filteredTransactions = transactions.filter(
+                    transaction => transaction.date === currentDateStr && 
+                                 transaction.userId === currentUser.id && 
+                                 transaction.type !== 'income'
+                );
+
+                const categories = {
+                    necessary: 0,
+                    prescindible: 0,
+                    superfluo: 0
+                };
+
+                filteredTransactions.forEach(transaction => {
+                    categories[transaction.type] += transaction.amount;
+                });
+
+                const ctx = document.getElementById('expenses-chart').getContext('2d');
+
+                if (expensesChart) {
+                    expensesChart.destroy();
+                }
+
+                expensesChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Necesarios', 'Prescindibles', 'Superfluos'],
+                        datasets: [{
+                            data: [categories.necessary, categories.prescindible, categories.superfluo],
+                            backgroundColor: [
+                                'rgba(56, 176, 0, 0.7)',
+                                'rgba(248, 150, 30, 0.7)',
+                                'rgba(239, 35, 60, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(56, 176, 0, 1)',
+                                'rgba(248, 150, 30, 1)',
+                                'rgba(239, 35, 60, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw || 0;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((value / total) * 100);
+                                        return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function renderDailyChart() {
+                // Obtener transacciones de los últimos 7 días
+                const endDate = new Date(currentDate);
+                const startDate = new Date(currentDate);
+                startDate.setDate(startDate.getDate() - 6);
+
+                const dateArray = [];
+                const dateLabels = [];
+                let currentDateIter = new Date(startDate);
+
+                while (currentDateIter <= endDate) {
+                    const dateStr = currentDateIter.toISOString().split('T')[0];
+                    dateArray.push(dateStr);
+                    dateLabels.push(currentDateIter.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' }));
+                    currentDateIter.setDate(currentDateIter.getDate() + 1);
+                }
+
+                const incomeData = [];
+                const expenseData = [];
+
+                dateArray.forEach(date => {
+                    const dailyTransactions = transactions.filter(
+                        transaction => transaction.date === date && transaction.userId === currentUser.id
+                    );
+
+                    let dailyIncome = 0;
+                    let dailyExpense = 0;
+
+                    dailyTransactions.forEach(transaction => {
+                        if (transaction.type === 'income') {
+                            dailyIncome += transaction.amount;
+                        } else {
+                            dailyExpense += transaction.amount;
+                        }
+                    });
+
+                    incomeData.push(dailyIncome);
+                    expenseData.push(dailyExpense);
+                });
+
+                const ctx = document.getElementById('daily-chart').getContext('2d');
+
+                if (dailyChart) {
+                    dailyChart.destroy();
+                }
+
+                dailyChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: dateLabels,
+                        datasets: [
+                            {
+                                label: 'Ingresos',
+                                data: incomeData,
+                                backgroundColor: 'rgba(0, 180, 216, 0.7)',
+                                borderColor: 'rgba(0, 180, 216, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Gastos',
+                                data: expenseData,
+                                backgroundColor: 'rgba(239, 35, 60, 0.7)',
+                                borderColor: 'rgba(239, 35, 60, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                stacked: false,
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                stacked: false,
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + value;
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.dataset.label || '';
+                                        const value = context.raw || 0;
+                                        return `${label}: $${value.toFixed(2)}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function showToast(message, type = 'success') {
+                toastMessage.textContent = message;
+                
+                if (type === 'error') {
+                    toast.classList.add('error');
+                } else {
+                    toast.classList.remove('error');
+                }
+
+                toast.classList.add('show');
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            function exportToJson() {
+                const userTransactions = transactions.filter(t => t.userId === currentUser.id);
+                const dataStr = JSON.stringify(userTransactions, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `gastos_${currentUser.name}_${new Date().toISOString().split('T')[0]}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                showToast('Datos exportados a JSON');
+            }
+
+            function exportToCsv() {
+                const userTransactions = transactions.filter(t => t.userId === currentUser.id);
+                const headers = ['Fecha', 'Descripción', 'Monto', 'Tipo'];
+                const csvRows = [headers.join(',')];
+                
+                userTransactions.forEach(transaction => {
+                    const row = [
+                        transaction.date,
+                        `"${transaction.description.replace(/"/g, '""')}"`,
+                        transaction.amount,
+                        transaction.type === 'income' ? 'Ingreso' : 
+                        transaction.type === 'necessary' ? 'Necesario' :
+                        transaction.type === 'prescindible' ? 'Prescindible' : 'Superfluo'
+                    ];
+                    csvRows.push(row.join(','));
+                });
+                
+                const csvData = csvRows.join('\n');
+                const dataUri = 'data:text/csv;charset=utf-8,'+ encodeURIComponent(csvData);
+                
+                const exportFileDefaultName = `gastos_${currentUser.name}_${new Date().toISOString().split('T')[0]}.csv`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                showToast('Datos exportados a CSV');
+            }
+
+            // Hacer accesible la función desde el HTML
+            window.deleteTransaction = deleteTransaction;
+        });
+    </script>
+</body>
+</html>
